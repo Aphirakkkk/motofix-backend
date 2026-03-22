@@ -1,0 +1,38 @@
+const express  = require('express');
+const mongoose = require('mongoose');
+const cors     = require('cors');
+require('dotenv').config();
+
+const { protect } = require('./middleware/authMiddleware');
+const app = express();
+
+// ── Middleware ──
+app.use(cors());
+app.use(express.json());
+
+// ── Public Routes (ไม่ต้อง Login) ──
+app.use('/api/auth', require('./routes/auth'));
+
+// ── Protected Routes (ต้อง Login) ──
+app.use('/api/jobs',      protect, require('./routes/jobs'));
+app.use('/api/customers', protect, require('./routes/customers'));
+app.use('/api/parts',     protect, require('./routes/parts'));
+app.use('/api/invoices',  protect, require('./routes/invoices'));
+app.use('/api/dashboard', protect, require('./routes/dashboard'));
+
+// ── Health check ──
+app.get('/', (req, res) => {
+  res.json({ message: '🏍️ MotoFix API is running!' });
+});
+
+// ── Connect MongoDB → Start server ──
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log('✅ MongoDB connected');
+    app.listen(process.env.PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${process.env.PORT}`);
+    });
+  })
+  .catch(err => {
+    console.error('❌ MongoDB connection error:', err.message);
+  });
