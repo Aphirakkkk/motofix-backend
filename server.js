@@ -1,7 +1,11 @@
 const express  = require('express');
 const mongoose = require('mongoose');
 const cors     = require('cors');
-require('dotenv').config();
+
+// โหลด .env เฉพาะตอน development เท่านั้น
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 const { protect } = require('./middleware/authMiddleware');
 const app = express();
@@ -29,8 +33,8 @@ app.get('/', (req, res) => {
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB connected');
-    app.listen(process.env.PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${process.env.PORT}`);
+    app.listen(process.env.PORT || 5000, () => {
+      console.log(`🚀 Server running on port ${process.env.PORT || 5000}`);
     });
   })
   .catch(err => {
