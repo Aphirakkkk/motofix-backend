@@ -13,12 +13,12 @@ const jobSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Auto-generate jobId เช่น J-0001
-jobSchema.pre('save', async function(next) {
+// Mongoose 7+ async pre-hooks ไม่รับ next เป็น parameter — ใช้ async/await แล้ว return ได้เลย
+jobSchema.pre('save', async function() {
   if (!this.jobId) {
     const count = await mongoose.model('Job').countDocuments();
     this.jobId = 'J-' + String(count + 1).padStart(4, '0');
   }
-  next();
 });
 
 module.exports = mongoose.model('Job', jobSchema);
