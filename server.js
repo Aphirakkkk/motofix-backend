@@ -23,6 +23,7 @@ app.use('/api/customers', protect, require('./routes/customers'));
 app.use('/api/parts',     protect, require('./routes/parts'));
 app.use('/api/invoices',  protect, require('./routes/invoices'));
 app.use('/api/dashboard', protect, require('./routes/dashboard'));
+app.use('/api/ledger',    protect, require('./routes/ledger'));
 
 // ── Health check ──
 app.get('/', (req, res) => {
